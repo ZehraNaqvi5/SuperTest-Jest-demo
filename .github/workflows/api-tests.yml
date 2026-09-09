@@ -1,37 +1,76 @@
-name: RUN SuperTest API Test CI
+name: SuperTest API Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  RUN-SuperTest-API-Test:
-
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [ 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Installation of related packages
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: npm
+
+      - name: Install dependencies
         run: npm ci
 
-      - name: RUN SuperTest API Testing
+      - name: Run SuperTest
         run: npm test
 
-      - name: Upload SuperTest  report to GitHub
+      # Downloadable report
+      - name: Archive SuperTest test report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: SuperTest-test-report
           path: ./Specs/Report
+          if-no-files-found: warn
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload report to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./Specs/Report
+
+  deploy:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy HTML Report
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Show Report URL
+        run: |
+          echo "## 🧪 SuperTest HTML Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 👉 [Open HTML Test Report](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Report URL: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
