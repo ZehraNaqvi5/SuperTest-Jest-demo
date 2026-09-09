@@ -1,0 +1,26 @@
+{
+  "name": "supertest-jest-demo",
+  "version": "1.0.0",
+  "description": "this is readme JEST",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZehraNaqvi5/SuperTest-Jest-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ZehraNaqvi5/SuperTest-Jest-demo/issues"
+  },
+  "homepage": "https://github.com/ZehraNaqvi5/SuperTest-Jest-demo#readme",
+  "devDependencies": {
+    "jest": "^30.5.1",
+    "jest-html-reporters": "^3.1.7",
+    "supertest": "^7.2.2"
+  }
+}
