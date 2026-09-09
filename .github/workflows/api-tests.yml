@@ -32,26 +32,32 @@ jobs:
       - name: Run SuperTest
         run: npm test
 
-      # Downloadable report
+      - name: Prepare HTML report
+        if: always()
+        run: |
+          test -f ./Specs/Report/report.html
+          cp ./Specs/Report/report.html ./Specs/Report/index.html
+          echo "Report prepared successfully"
+
       - name: Archive SuperTest test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: SuperTest-test-report
           path: ./Specs/Report
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload report to GitHub Pages
+      - name: Upload report to Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./Specs/Report
 
   deploy:
     needs: test
-    if: always()
+    if: needs.test.result == 'success'
     runs-on: ubuntu-latest
 
     permissions:
@@ -69,8 +75,8 @@ jobs:
 
       - name: Show Report URL
         run: |
-          echo "## 🧪 SuperTest HTML Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 👉 [Open HTML Test Report](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Report URL: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "## 🧪 SuperTest HTML Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### 👉 [Open HTML Test Report](${{ steps.deployment.outputs.page_url }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Report URL: ${{ steps.deployment.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
