@@ -2,9 +2,9 @@ name: RUN SuperTest API Test CI
 
 on:
   push:
-    branches: [ "setup/jest-api-testing" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "setup/jest-api-testing" ]
+    branches: [ "main" ]
 
 jobs:
   RUN-SuperTest-API-Test:
