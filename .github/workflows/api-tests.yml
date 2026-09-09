@@ -31,7 +31,7 @@ jobs:
         run: npm test
 
       - name: Archive SuperTest test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: SuperTest-test-report
           path: Report
